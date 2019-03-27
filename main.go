@@ -31,7 +31,6 @@ type Input struct {
 }
 
 func Handler(input Input) {
-
 	client, _ := buildGitClient(input)
 
 	searchOpt := &github.SearchOptions{
@@ -61,14 +60,17 @@ func Handler(input Input) {
 
 	n := len(ps)
 	if len(ps) == 0 {
-		SendSlackNotification(input.SlackWebHookUrl, input.SlackChannel, buildNoPullRequestMessage())
+		err = SendSlackNotification(input.SlackWebHookUrl, input.SlackChannel, buildNoPullRequestMessage())
 	} else {
 		var msg strings.Builder
 		msg.WriteString(buildMessageHeader(n))
 		for _, p := range ps {
 			msg.WriteString(buildSlackMessageBody(p))
 		}
-		SendSlackNotification(input.SlackWebHookUrl, input.SlackChannel, msg.String())
+		err = SendSlackNotification(input.SlackWebHookUrl, input.SlackChannel, msg.String())
+	}
+	if err != nil {
+		printAndExit("Couldn't post to slack", err)
 	}
 }
 
@@ -177,14 +179,14 @@ func SendSlackNotification(webhookUrl string, channel string, msg string) error 
 
 	client := http.Client{Timeout: 10 * time.Second}
 	resp, err := client.Do(req)
-	defer resp.Body.Close()
 	if err != nil {
 		return err
 	}
 
+	defer resp.Body.Close()
 	buf := new(bytes.Buffer)
-	buf.ReadFrom(resp.Body)
-	if buf.String() != "ok" {
+	_, err = buf.ReadFrom(resp.Body)
+	if err != nil || buf.String() != "ok" {
 		return errors.New("Non-ok response returned from Slack")
 	}
 	return nil
