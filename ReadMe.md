@@ -2,6 +2,8 @@
 
 PRMon(itor) is a small utility which reminds your team about the open pull requests across the organization.
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/pkmishra/PRMon)](https://goreportcard.com/report/github.com/pkmishra/PRMon)
+
 ### Features
 * Works for Enterprise git or github account
 * Implemented as Lambda function which can be scheduled using cloudwatch event scheduler (Cron)
