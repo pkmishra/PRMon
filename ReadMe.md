@@ -1,8 +1,8 @@
-#PRMon
+# PRMon
 
 PRMon(itor) is a small utility which reminds your team about the open pull requests across the organization.
 
-###Features
+### Features
 * Works for Enterprise git or github account
 * Implemented as Lambda function which can be scheduled using cloudwatch event scheduler (Cron)
 * Lambda function can be deployed using terraform.
